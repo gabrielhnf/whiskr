@@ -1,6 +1,6 @@
 # 🐾 Whiskr
 
-**A C(at)-based programming language written in C.**
+**A C(at)-based programming language written in C/C++!.**
 
 Whiskr is a basic educational programming language where everything is cat-themed — because why not? It's a purrfect excuse to explore how programming languages work under the hood, including lexers, parsers, and interpreters or compilers.
 

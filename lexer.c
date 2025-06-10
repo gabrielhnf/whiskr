@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "functions.h"
+#include "tokens.h"
 
 #define INITIAL_SIZE 10
 

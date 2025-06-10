@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "functions.h"
+#include "tokens.h"
 
 #define INITIAL_SIZE 10
+
+static char* multicharOperators[] = { "==", "!=", ">=", "<=" };
 
 Token* CreateToken(char* str){
     Token* token = malloc(sizeof(Token));
@@ -113,12 +115,18 @@ static int isDelimiter(char ch){
     }
 }
 
+static char peek(char* buffer, int index){
+    return buffer[index + 1];
+}
+
 Token* Tokenize(char* filename){
     FILE* fd = fopen(filename, "r");
     char ch;
     char* buf = malloc(INITIAL_SIZE);
     unsigned int currentSize = INITIAL_SIZE;
+
     unsigned int counter = 0;
+    unsigned int line = 1;
 
     Token* prevToken = NULL;
     Token* startToken = NULL;
@@ -137,14 +145,15 @@ Token* Tokenize(char* filename){
         }
 
         int delimiter = isDelimiter(ch);
+
+        if(ch == '\n') line++; //Fuck macOS
+
         if(!delimiter){
             //Keep reading
             buf[counter] = ch;
             buf[counter + 1] = '\0';
             counter += 1;
         } else {
-            counter = 0;
-
             if(strlen(buf)){
                 //Assign token to string
                 Token* token = CreateToken(strdup(buf));
@@ -155,10 +164,20 @@ Token* Tokenize(char* filename){
             }
 
             if(delimiter == 1){
-                //Assign token to delimiter
-                char* tempStr = malloc(2);
+
+                char* tempStr = malloc(3);
                 tempStr[0] = ch;
-                tempStr[1] = '\0';
+
+                for(int i = 0; i < 4; i++){ //Hardcoded, and very ugly
+                    if(ch == multicharOperators[i][0] && peek(buf, counter) == multicharOperators[i][1]){
+                        tempStr[1] = '=';
+                        tempStr[2] = '\0';
+                    } else {
+                        tempStr[1] = '\0';
+                    }
+
+                }
+                //Assign token to delimiter
 
                 Token* delimToken = CreateToken(strdup(tempStr));
                 AnalyzeToken(delimToken);
@@ -171,6 +190,7 @@ Token* Tokenize(char* filename){
             }
 
             //Reset buffer;
+            counter = 0;
             memset(buf, '\0', currentSize);
 
         }
