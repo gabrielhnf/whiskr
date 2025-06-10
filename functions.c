@@ -84,6 +84,35 @@ Token* LinkTokens(Token* token, Token* prevToken){
     return startToken;
 }
 
+static int isDelimiter(char ch){
+    switch (ch) {
+        case ' ':
+            return 2; //Return 2 if should not be treated as a separate token
+        case '\n':
+            return 2;
+        case '(':
+            return 1;
+        case ')':
+            return 1;
+        case '{':
+            return 1;
+        case '}':
+            return 1;
+        case '+':
+            return 1;
+        case '-':
+            return 1;
+        case '*':
+            return 1;
+        case '/':
+            return 1;
+        case ';':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 Token* Tokenize(char* filename){
     FILE* fd = fopen(filename, "r");
     char ch;
@@ -107,22 +136,46 @@ Token* Tokenize(char* filename){
             }
         }
 
-        if(ch == ' ' || ch == ';'){
-            buf[counter] = '\0';
+        int delimiter = isDelimiter(ch);
+        if(!delimiter){
+            //Keep reading
+            buf[counter] = ch;
+            buf[counter + 1] = '\0';
+            counter += 1;
+        } else {
             counter = 0;
 
-            // Remember to free strdup later, its allocated in the heap and its not freed anywhere
-            Token* token = CreateToken(strdup(buf));
-            AnalyzeToken(token);
-            startToken = LinkTokens(token, prevToken);
+            if(strlen(buf)){
+                //Assign token to string
+                Token* token = CreateToken(strdup(buf));
+                AnalyzeToken(token);
+                startToken = LinkTokens(token, prevToken);
 
-            prevToken = token;
+                prevToken = token;
+            }
 
-        } else{
-            buf[counter] = ch;
-            counter +=1;
+            if(delimiter == 1){
+                //Assign token to delimiter
+                char* tempStr = malloc(2);
+                tempStr[0] = ch;
+                tempStr[1] = '\0';
+
+                Token* delimToken = CreateToken(strdup(tempStr));
+                AnalyzeToken(delimToken);
+                startToken = LinkTokens(delimToken, prevToken);
+
+                prevToken = delimToken;
+
+                free(tempStr);
+                tempStr = NULL;
+            }
+
+            //Reset buffer;
+            memset(buf, '\0', currentSize);
+
         }
 
     }
+
     return startToken;
 }
