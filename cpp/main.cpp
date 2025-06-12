@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -53,9 +54,8 @@ typedef enum {
 
 class Token {
     public:
-    Token(string m_name, Type m_type, int m_line){
+    Token(string m_name, int m_line){
         name = m_name;
-        type = m_type;
         line = m_line;
     }
 
@@ -92,6 +92,9 @@ void ScanToken(Token* token){
     } else if (auto search = operatorMap.find(token->name); search != operatorMap.end()) {
         token->type = OPERATOR;
         token->subtype = search->second;
+    } else {
+        token->type = LITERAL;
+        token->subtype = 0;
     }
 }
 
@@ -169,23 +172,21 @@ void report(int line, string where, string message){
 
 void checkTokens(Token* token){
     for(Token* i = token; i != nullptr; i = i->next){
-
         //Rules for operators
         if(i->type == OPERATOR){
             if(i->next != nullptr){
                 if(i->next->type != LITERAL){
-                    report(i->line, i->name, "Invalid syntax.");
+                    report(i->line, i->name, "Invalid syntax. 1");
                 }
 
                 if(i->next->line != i->line){
-                    report(i->line, i->name, "Invalid syntax.");
+                    report(i->line, i->name, "Invalid syntax. 2");
                 }
             } else {
-                report(i->line, i->name, "Invalid syntax.");
+                report(i->line, i->name, "Invalid syntax. 3");
             }
-
             if(i->prev == nullptr){
-                report(i->line, i->name, "Invalid syntax.");
+                report(i->line, i->name, "Invalid syntax. 4");
             }
         }
 
@@ -194,7 +195,7 @@ void checkTokens(Token* token){
             if(i->next != nullptr){
                 if(i->next->line == i->line){
                     if(i->next->type != OPERATOR && i->next->type != KEYWORD){
-                        report(i->line, i->name, "Invalid syntax.");
+                        report(i->line, i->name, "Invalid syntax. 5");
                     }
                 }
             }
@@ -205,13 +206,13 @@ void checkTokens(Token* token){
             if(i->next != nullptr){
                 if(i->next->line == i->line){
                     if(i->next->type != LITERAL){
-                        report(i->line, i->name, "Expected expression.");
+                        report(i->line, i->name, "Expected expression. 6");
                     }
                 } else{
-                    report(i->line, i->name, "Expected expression.");
+                    report(i->line, i->name, "Expected expression. 7");
                 }
             } else {
-                report(i->line, i->name, "Expected expression.");
+                report(i->line, i->name, "Expected expression. 8");
             }
         }
     }
@@ -232,21 +233,24 @@ int main(){
         if(!isDelimiter(ch) && !isOperator(ch)){
             buffer.append(1, ch);
         } else {
+            Token* token = new Token("", line);
+            if(prevToken == nullptr) startToken = token;
 
             if(buffer.length()) {
-                Token* token = new Token(buffer, LITERAL, line);
-                ScanToken(token);
+                //Token* token = new Token(buffer, line);
+                token->name = buffer;
+                //ScanToken(token);
 
-                if(prevToken == nullptr) startToken = token;
-                LinkTokens(token, prevToken);
-                prevToken = token;
+                //if(prevToken == nullptr) startToken = token;
+                //LinkTokens(token, prevToken);
+                //prevToken = token;
 
                 buffer = "";
             }
 
             if(isOperator(ch)){
-
-                Token* token = new Token("", OPERATOR, line);
+                //Token* token = new Token("", line);
+                //if(prevToken == nullptr) startToken = token;
 
                 string temp = {ch, (char)fd.peek()};
 
@@ -258,6 +262,21 @@ int main(){
                     token->name = ch;
                 }
 
+                if(temp == "//"){
+                    token->name = "";
+                    while(fd.get() != '\n'){
+                        continue; //Consume until next line
+                    }
+                }
+
+                //ScanToken(token);
+                //LinkTokens(token, prevToken);
+                //prevToken = token;
+            }
+
+            if(!token->name.length()) free(token);
+            else{
+                ScanToken(token);
                 LinkTokens(token, prevToken);
                 prevToken = token;
             }
@@ -272,9 +291,6 @@ int main(){
 
     for(Token* i = startToken; i != nullptr; i = i->next){
         cout << "Token: " << i->name << endl;
-        cout << "Type: " << i->type << endl;
-        cout << "Keyword: " << i->subtype << endl;
-        cout << endl;
 
     }
 
