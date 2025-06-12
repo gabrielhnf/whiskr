@@ -2,14 +2,54 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 using namespace std;
 
 typedef enum {
     KEYWORD,
-    LITERAL, //Both numbers and identifiers for now
+    LITERAL,
     OPERATOR,
     UNKNOWN
 } Type;
+
+typedef enum {
+    //Booleans
+    AND, OR, TRUE, FALSE,
+
+    //Functions and classes
+    PURRCEDURE, CLAWSS, SUPURR, THISS,
+
+    //Control flow
+    FUR, SNIFF, MEWLSE, BACKPAW, WHILE,
+
+    //NULL
+    FURGET, //Maybe will use as break;
+
+    //Print
+    MEOW,
+
+    //Variable declaration
+    PAW,
+
+    //EOF
+    NAP
+} Keywords;
+
+typedef enum {
+    NUMBER, STRING, IDENTIFIER
+} Literals;
+
+typedef enum {
+
+    OPEN_PAREN, CLOSED_PAREN, OPEN_CURLY, CLOSED_CURLY,
+    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+
+    EQUAL, NOT,
+    GREATER, LESS,
+    EQUAL_EQUAL, NOT_EQUAL,
+    GREATER_EQUAL, LESS_EQUAL
+
+} Operators;
 
 class Token {
     public:
@@ -21,11 +61,39 @@ class Token {
 
     string name;
     Type type;
+    int subtype;
     int line;
 
     Token* next = NULL;
     Token* prev = NULL;
 };
+
+unordered_map<string, Keywords> keywordMap = {
+    {"and", AND}, {"or", OR}, {"true", TRUE}, {"false", FALSE},
+    {"purrcedure", PURRCEDURE}, {"clawss", CLAWSS}, {"supurr", SUPURR}, {"thiss", THISS},
+    {"fur", FUR}, {"sniff", SNIFF}, {"mewlse", MEWLSE}, {"backpaw", BACKPAW}, {"while", WHILE},
+    {"furget", FURGET}, {"meow", MEOW}, {"paw", PAW}, {"nap", NAP}
+};
+
+unordered_map<string, Operators> operatorMap = {
+    {"(", OPEN_PAREN}, {")", CLOSED_PAREN}, {"{", OPEN_CURLY}, {"}", CLOSED_CURLY},
+    {",", COMMA}, {".", DOT}, {"-", MINUS}, {"+", PLUS}, {";", SEMICOLON}, {"/", SLASH}, {"*", STAR},
+
+    {"=", EQUAL}, {"!", NOT},
+    {">", GREATER}, {"<", LESS},
+    {"==", EQUAL_EQUAL}, {"!=", NOT_EQUAL},
+    {">=", GREATER_EQUAL}, {"<=", LESS_EQUAL}
+};
+
+void ScanToken(Token* token){
+    if(auto search = keywordMap.find(token->name); search != keywordMap.end()){
+        token->type = KEYWORD;
+        token->subtype = search->second;
+    } else if (auto search = operatorMap.find(token->name); search != operatorMap.end()) {
+        token->type = OPERATOR;
+        token->subtype = search->second;
+    }
+}
 
 bool isDelimiter(char ch){
     switch (ch) {
@@ -93,25 +161,61 @@ void FreeTokens(Token* startToken){
     }
 }
 
-void report(int line, string message){
-    cout << "Error at line " << line << "." << endl;
+void report(int line, string where, string message){
+    cout << "Error at line " << line << ", in '" << where << "'." << endl;
     cout << message << endl;
     exit(-1);
 }
 
 void checkTokens(Token* token){
     for(Token* i = token; i != nullptr; i = i->next){
+
+        //Rules for operators
         if(i->type == OPERATOR){
-            if(i->prev->type != LITERAL || i->next->type != LITERAL){
-                report(i->line, "Invalid syntax.");
+            if(i->next != nullptr){
+                if(i->next->type != LITERAL){
+                    report(i->line, i->name, "Invalid syntax.");
+                }
+
+                if(i->next->line != i->line){
+                    report(i->line, i->name, "Invalid syntax.");
+                }
+            } else {
+                report(i->line, i->name, "Invalid syntax.");
             }
-            if(i->prev->line != i->line || i->next->line != i->line){
-                report(i->line, "Invalid syntax.");
+
+            if(i->prev == nullptr){
+                report(i->line, i->name, "Invalid syntax.");
+            }
+        }
+
+        //Rules for literals
+        if(i->type == LITERAL){
+            if(i->next != nullptr){
+                if(i->next->line == i->line){
+                    if(i->next->type != OPERATOR && i->next->type != KEYWORD){
+                        report(i->line, i->name, "Invalid syntax.");
+                    }
+                }
+            }
+        }
+
+        //Rules for keywords
+        if(i->type == KEYWORD){
+            if(i->next != nullptr){
+                if(i->next->line == i->line){
+                    if(i->next->type != LITERAL){
+                        report(i->line, i->name, "Expected expression.");
+                    }
+                } else{
+                    report(i->line, i->name, "Expected expression.");
+                }
+            } else {
+                report(i->line, i->name, "Expected expression.");
             }
         }
     }
 }
-
 
 int main(){
     ifstream fd;
@@ -131,6 +235,7 @@ int main(){
 
             if(buffer.length()) {
                 Token* token = new Token(buffer, LITERAL, line);
+                ScanToken(token);
 
                 if(prevToken == nullptr) startToken = token;
                 LinkTokens(token, prevToken);
@@ -167,7 +272,8 @@ int main(){
 
     for(Token* i = startToken; i != nullptr; i = i->next){
         cout << "Token: " << i->name << endl;
-        cout << "Line: " << i->line << endl;
+        cout << "Type: " << i->type << endl;
+        cout << "Keyword: " << i->subtype << endl;
         cout << endl;
 
     }
