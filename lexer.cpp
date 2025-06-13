@@ -176,17 +176,17 @@ void checkTokens(Token* token){
         if(i->type == OPERATOR){
             if(i->next != nullptr){
                 if(i->next->type != LITERAL){
-                    report(i->line, i->name, "Invalid syntax. 1");
+                    report(i->line, i->name, "Invalid syntax.");
                 }
 
                 if(i->next->line != i->line){
-                    report(i->line, i->name, "Invalid syntax. 2");
+                    report(i->line, i->name, "Invalid syntax.");
                 }
             } else {
-                report(i->line, i->name, "Invalid syntax. 3");
+                report(i->line, i->name, "Invalid syntax.");
             }
             if(i->prev == nullptr){
-                report(i->line, i->name, "Invalid syntax. 4");
+                report(i->line, i->name, "Invalid syntax.");
             }
         }
 
@@ -195,7 +195,7 @@ void checkTokens(Token* token){
             if(i->next != nullptr){
                 if(i->next->line == i->line){
                     if(i->next->type != OPERATOR && i->next->type != KEYWORD){
-                        report(i->line, i->name, "Invalid syntax. 5");
+                        report(i->line, i->name, "Invalid syntax.");
                     }
                 }
             }
@@ -206,13 +206,13 @@ void checkTokens(Token* token){
             if(i->next != nullptr){
                 if(i->next->line == i->line){
                     if(i->next->type != LITERAL){
-                        report(i->line, i->name, "Expected expression. 6");
+                        report(i->line, i->name, "Expected expression.");
                     }
                 } else{
-                    report(i->line, i->name, "Expected expression. 7");
+                    report(i->line, i->name, "Expected expression.");
                 }
             } else {
-                report(i->line, i->name, "Expected expression. 8");
+                report(i->line, i->name, "Expected expression.");
             }
         }
     }
@@ -237,21 +237,11 @@ int main(){
             if(prevToken == nullptr) startToken = token;
 
             if(buffer.length()) {
-                //Token* token = new Token(buffer, line);
                 token->name = buffer;
-                //ScanToken(token);
-
-                //if(prevToken == nullptr) startToken = token;
-                //LinkTokens(token, prevToken);
-                //prevToken = token;
-
                 buffer = "";
             }
 
             if(isOperator(ch)){
-                //Token* token = new Token("", line);
-                //if(prevToken == nullptr) startToken = token;
-
                 string temp = {ch, (char)fd.peek()};
 
                 if(isMultiCharOp(temp)){
@@ -268,10 +258,6 @@ int main(){
                         continue; //Consume until next line
                     }
                 }
-
-                //ScanToken(token);
-                //LinkTokens(token, prevToken);
-                //prevToken = token;
             }
 
             if(!token->name.length()) free(token);
