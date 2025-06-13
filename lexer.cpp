@@ -218,9 +218,17 @@ void checkTokens(Token* token){
     }
 }
 
-int main(){
+int main(int argc, char* argv[]){
+    if(argc != 2) {
+        cout << "Usage: ./lexer.o /path/to/file.w" << endl;
+        return -1;
+    }
+
     ifstream fd;
-    fd.open("op");
+    fd.open(argv[1]);
+    if(fd.fail()){
+        cout << "Could not open file." << endl;
+    }
 
     string buffer = "";
 
