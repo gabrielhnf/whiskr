@@ -2,9 +2,9 @@
 
 **A C(at)-based programming language written in C/C++!.**
 
-Whiskr is a basic educational programming language where everything is cat-themed — because why not? It's a purrfect excuse to explore how programming languages work under the hood, including lexers, parsers, and interpreters or compilers.
+Whiskr is (or will be) a basic programming language where everything is cat-themed — because why not? It's a purrfect excuse to explore how programming languages work under the hood.
 
-> ⚠️ This project is currently a learning experiment, not meant for production use. I'm figuring things out as I go — expect bugs, hairballs, and plenty of `meow()`.
+> ⚠️ This project is more than anything a learning experiment, I'm figuring things out as I go — expect bugs, not-so optimized methods, and plenty of printf's, or `meow()`'s.
 
 ---
 
@@ -26,8 +26,7 @@ purrcedure myain() {
  - nyaa~ – string concatenation (maybe)
 
 > The project is still VERY early in development, so syntax is subject to change.
-
-Feel free to leave syntax suggestions!
+> And as such, feel free to leave syntax suggestions if you've got funnier (or cringier) puns than I do.
 
 ---
 
@@ -37,7 +36,7 @@ Feel free to leave syntax suggestions!
 
    - Build a parser and simple AST
 
-   - Interpret or compile to bytecode (TBD)
+   - Compile to x86 assembly
 
    - Learn and document the process 🧠
 
@@ -45,23 +44,23 @@ Feel free to leave syntax suggestions!
 
 ## 🐛 Current Progress
 
- - [ ] Lexer (work in progress)
+ - [x] Lexer
 
- - [ ] Parser
+ - [ ] Parser (work in progress)
 
  - [ ] AST + Interpreter
 
- - [ ] Basic stdlib (like meow())
+ - [ ] Basic stdlib
 
  - [ ] Example programs
 
-If you're curious about how programming languages work, feel free to poke around. This is all for educational purposes and will likely be messy, experimental, and full of trial and error.
+ - [ ] (optional) FFI integration with C
 
 ---
 
 ## 🚧 Status
 
-Still very early! I'm currently stuck wrangling the lexer, so no stable builds or documentation yet. If you're a kind soul who wants to help, feel free to open an issue or PR — or just leave some motivational meows.
+Still very early! I just started the parser and have got many things to learn, so no stable builds or documentation yet. If you're a kind soul who wants to help, feel free to open an issue or PR — or just leave some motivational meows.
 
 ---
 
@@ -69,9 +68,9 @@ Still very early! I'm currently stuck wrangling the lexer, so no stable builds o
 
   * C (the language)
 
-  * Crafting Interpreters by Bob Nystrom
-
   * Cats 🐈
+
+  * Just the two are enough. (The first one is debatable)
 
 ---
 
