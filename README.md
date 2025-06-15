@@ -46,7 +46,7 @@ purrcedure myain() {
 
  - [x] Lexer
 
- - [ ] Parser (work in progress)
+ - [x] Parser
 
  - [ ] AST + Interpreter
 
@@ -60,7 +60,10 @@ purrcedure myain() {
 
 ## 🚧 Status
 
-Still very early! I just started the parser and have got many things to learn, so no stable builds or documentation yet. If you're a kind soul who wants to help, feel free to open an issue or PR — or just leave some motivational meows.
+Very early in development!
+I managed to complete the functionality of both the lexer and the parser.
+I expect to refine and refactor them in the future, but they work as of now.
+The next step is semantic analysis, type checking, error handling and such!
 
 ---
 

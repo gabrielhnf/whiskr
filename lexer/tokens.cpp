@@ -147,6 +147,5 @@ Token* tokenize(std::string filename){
         }
     }
     fd.close();
-
     return startToken;
 }
