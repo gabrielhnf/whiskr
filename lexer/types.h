@@ -19,6 +19,8 @@ typedef enum {
     MEOW,
     //Variable declaration
     PAW,
+    //EOL
+    EOL,
     //EOF
     NAP
 } Keywords;
@@ -33,7 +35,8 @@ typedef enum {
     EQUAL, NOT,
     GREATER, LESS,
     EQUAL_EQUAL, NOT_EQUAL,
-    GREATER_EQUAL, LESS_EQUAL
+    GREATER_EQUAL, LESS_EQUAL,
+    QUOTES, DOUBLE_QUOTES
 } Operators;
 
 class Token {

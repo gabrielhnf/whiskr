@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <memory>
 
 Parser::Parser(Token* token): currentToken(token){}
 
@@ -18,6 +19,14 @@ std::unique_ptr<Expression> Parser::parsePrimary(){
 
         if(currentToken->next != nullptr) currentToken = currentToken->next;
         return std::make_unique<Grouping>(Grouping(std::move(expr)));
+    }
+
+    if(currentToken->type == LITERAL) {
+        Visitor v;
+        auto literal = std::make_unique<Literal>(Literal(currentToken));
+        literal->accept(v);
+        if(currentToken->next != nullptr) currentToken = currentToken->next;
+        return literal;
     }
 
     throw std::runtime_error("Expected expression.");
@@ -95,4 +104,36 @@ std::unique_ptr<Expression> Parser::parseEquality(){
 
 std::unique_ptr<Expression> Parser::parseExpression(){
     return parseEquality();
+}
+
+void Grouping::accept(Visitor& v){
+    v.visitGrouping(*this);
+}
+
+void Binary::accept(Visitor& v){
+    v.visitBinary(*this);
+}
+
+void Unary::accept(Visitor& v){
+    v.visitUnary(*this);
+}
+
+void Literal::accept(Visitor& v){
+    v.visitLiteral(*this);
+}
+
+void Visitor::visitUnary(Unary& unary){
+
+}
+
+void Visitor::visitBinary(Binary& binary){
+
+}
+
+void Visitor::visitGrouping(Grouping& group){
+
+}
+
+void Visitor::visitLiteral(Literal& literal){
+
 }

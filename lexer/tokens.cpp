@@ -1,4 +1,5 @@
 #include "tokens.h"
+#include <stdexcept>
 #include <string>
 #include <fstream>
 #include <unordered_map>
@@ -16,8 +17,11 @@ void scanToken(Token* token){
         token->type = OPERATOR;
         token->subtype = search->second;
     } else {
+        //Detect if number, string or identifier
         token->type = LITERAL;
-        token->subtype = 0;
+        if(isNumber(token->name)) token->subtype = NUMBER;
+        else if(token->name[0] == '"') token->subtype = STRING;
+        else token->subtype = IDENTIFIER;
     }
 }
 
@@ -35,60 +39,15 @@ void freeTokens(Token* startToken){
 }
 
 void checkTokens(Token* token){
-    for(Token* i = token; i != nullptr; i = i->next){
-        //Rules for operators
-        if(i->type == OPERATOR){
-            if(i->next != nullptr){
-                if(i->next->type != LITERAL){
-                    report(i->line, i->name, "Invalid syntax. ERROR: 1");
-                }
-
-                if(i->next->line != i->line){
-                    report(i->line, i->name, "Invalid syntax. ERROR: 2");
-                }
-            } else {
-                report(i->line, i->name, "Invalid syntax. ERROR: 3");
-            }
-            if(i->prev == nullptr){
-                report(i->line, i->name, "Invalid syntax. ERROR: 4");
-            }
-        }
-
-        //Rules for literals
-        if(i->type == LITERAL){
-            if(i->next != nullptr){
-                if(i->next->line == i->line){
-                    if(i->next->type != OPERATOR && i->next->type != KEYWORD){
-                        report(i->line, i->name, "Invalid syntax. ERROR: 5");
-                    }
-                }
-            }
-        }
-
-        //Rules for keywords
-        if(i->type == KEYWORD){
-            if(i->next != nullptr){
-                if(i->next->line == i->line){
-                    if(i->next->type != LITERAL){
-                        report(i->line, i->name, "Expected expression. ERROR: 6");
-                    }
-                } else{
-                    report(i->line, i->name, "Expected expression. ERROR: 7");
-                }
-            } else {
-                report(i->line, i->name, "Expected expression. ERROR: 8");
-            }
-        }
-    }
 }
 
-void report(int line, std::string where, std::string message){
-    std::cout << "Error at line " << line << ", in '" << where << "'." << std::endl;
+void report(int line, int charCount, std::string message){
+    std::cout << "Error: LN " << line <<"; COL " << charCount << std::endl;
+    //TODO: Print couple of chars surrounding it
     std::cout << message << std::endl;
-    exit(-1);
 }
 
-Token* createAndSendToken(std::string name, int line, Token** startToken, Token* prevToken){
+Token* deployToken(std::string name, int line, Token** startToken, Token* prevToken){
     Token* token = new Token(name, line);
     scanToken(token);
     linkTokens(token, prevToken);
@@ -114,18 +73,43 @@ Token* tokenize(std::string filename){
 
     char ch;
     int line = 1;
+    int charCount = 0;
     while(fd.get(ch)){
+        charCount++;
         if(!isDelimiter(ch) && !isOperator(ch)){
             buffer.append(1, ch);
         } else {
 
             if(buffer.length()) {
-                prevToken = createAndSendToken(buffer, line, &startToken, prevToken);
+                prevToken = deployToken(buffer, line, &startToken, prevToken);
                 buffer = "";
             }
 
+            if(ch == ';'){
+                prevToken = deployToken(std::string(1, ch), line, &startToken, prevToken);
+                continue;
+            }
+
             if(isOperator(ch)){
-                std::string temp = {ch, (char)fd.peek()};
+                if(ch == '"'){
+                    buffer.append(1, ch);
+                    bool stringOpened = true;
+                    while(fd.get(ch)){
+                        buffer.append(1, ch);
+                        if(ch == '"'){
+                            stringOpened = false;
+                            fd.get(); //Advance
+                            break;
+                        }
+
+
+                    }
+                    prevToken = deployToken(buffer, line, &startToken, prevToken);
+                    buffer = "";
+                    continue;
+                }
+
+                std::string temp = {ch, (char)fd.peek()}; //Lookahead 1 char
 
                 if(temp == "//"){
                     while(fd.get() != '\n'){
@@ -136,16 +120,30 @@ Token* tokenize(std::string filename){
 
                 if(isMOperator(temp)){
                     fd.get(ch); //Consume to not lose order
-                    prevToken = createAndSendToken(temp, line, &startToken, prevToken);
+                    prevToken = deployToken(temp, line, &startToken, prevToken);
 
                 } else {
-                    prevToken = createAndSendToken(std::string(1, ch), line, &startToken, prevToken);
+                    prevToken = deployToken(std::string(1, ch), line, &startToken, prevToken);
                 }
             }
 
-            if(ch == '\n' || ch == ';') line++;
+            if(ch == '\n'){
+                line++;
+                charCount = 0;
+            };
         }
     }
     fd.close();
     return startToken;
+}
+
+bool isNumber(std::string buffer){
+    try {
+        std::string::size_type sz;
+        int a = std::stoi(buffer, &sz);
+        return sz == buffer.length();
+
+    } catch (std::invalid_argument) {
+        return false;
+    }
 }

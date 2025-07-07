@@ -10,3 +10,4 @@ void checkTokens(Token* token);
 Token* tokenize(std::string filename);
 
 void report(int line, std::string where, std::string message);
+bool isNumber(std::string buffer);
