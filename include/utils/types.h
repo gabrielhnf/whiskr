@@ -1,6 +1,7 @@
-#include <string>
-#include <unordered_map>
+#pragma once
+
 typedef enum {
+    UNKNOWN,
     KEYWORD,
     LITERAL,
     OPERATOR
@@ -19,8 +20,6 @@ typedef enum {
     MEOW,
     //Variable declaration
     PAW,
-    //EOL
-    EOL,
     //EOF
     NAP
 } Keywords;
@@ -38,23 +37,3 @@ typedef enum {
     GREATER_EQUAL, LESS_EQUAL,
     QUOTES, DOUBLE_QUOTES
 } Operators;
-
-class Token {
-    public:
-    Token(std::string m_name, int m_line){
-        name = m_name;
-        line = m_line;
-    }
-
-    std::string name;
-    Type type;
-    int subtype;
-    int line;
-
-    Token* next = NULL;
-    Token* prev = NULL;
-};
-
-bool isDelimiter(char ch);
-bool isOperator(char ch);
-bool isMOperator(std::string str);

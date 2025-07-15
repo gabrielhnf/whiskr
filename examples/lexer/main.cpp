@@ -1,4 +1,6 @@
-#include "tokens.h"
+#include "../../include/utils/token.h"
+#include "../../include/lexer/helpers.h"
+
 #include <iostream>
 using namespace std;
 
@@ -14,10 +16,10 @@ int main(int argc, char* argv[]){
         return -1;
     }
 
-    for(Token* i = startToken; i != nullptr; i = i->next){
-        cout << "Token: " << i->name << endl;
-        cout << "Token type: " << i->type << endl;
-        cout << "Token subtype: " << i->subtype << endl;
+    for(Token* i = startToken; i != nullptr; i = i->next()){
+        cout << "Token: " << i->name() << endl;
+        cout << "Token type: " << i->type() << endl;
+        cout << "Token subtype: " << i->subtype() << endl;
         cout << "--------------------------" << endl;
 
     }
