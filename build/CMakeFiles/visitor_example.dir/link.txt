@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/visitor_example.dir/link.d CMakeFiles/visitor_example.dir/examples/visitor/main.cpp.o -o visitor_example  src/visitor/libvisitor.a src/parser/libparser.a src/lexer/libhelpers.a src/utils/libtypes.a

@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/parser_example.dir/link.d CMakeFiles/parser_example.dir/examples/parser/main.cpp.o -o parser_example  src/parser/libparser.a src/visitor/libvisitor.a src/lexer/libhelpers.a src/utils/libtypes.a
