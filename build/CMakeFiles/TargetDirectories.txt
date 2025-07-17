@@ -1,0 +1,17 @@
+/home/gabriel/Documents/whiskr/build/CMakeFiles/visitor_example.dir
+/home/gabriel/Documents/whiskr/build/CMakeFiles/parser_example.dir
+/home/gabriel/Documents/whiskr/build/CMakeFiles/lexer_example.dir
+/home/gabriel/Documents/whiskr/build/CMakeFiles/edit_cache.dir
+/home/gabriel/Documents/whiskr/build/CMakeFiles/rebuild_cache.dir
+/home/gabriel/Documents/whiskr/build/src/utils/CMakeFiles/types.dir
+/home/gabriel/Documents/whiskr/build/src/utils/CMakeFiles/edit_cache.dir
+/home/gabriel/Documents/whiskr/build/src/utils/CMakeFiles/rebuild_cache.dir
+/home/gabriel/Documents/whiskr/build/src/lexer/CMakeFiles/helpers.dir
+/home/gabriel/Documents/whiskr/build/src/lexer/CMakeFiles/edit_cache.dir
+/home/gabriel/Documents/whiskr/build/src/lexer/CMakeFiles/rebuild_cache.dir
+/home/gabriel/Documents/whiskr/build/src/parser/CMakeFiles/parser.dir
+/home/gabriel/Documents/whiskr/build/src/parser/CMakeFiles/edit_cache.dir
+/home/gabriel/Documents/whiskr/build/src/parser/CMakeFiles/rebuild_cache.dir
+/home/gabriel/Documents/whiskr/build/src/visitor/CMakeFiles/visitor.dir
+/home/gabriel/Documents/whiskr/build/src/visitor/CMakeFiles/edit_cache.dir
+/home/gabriel/Documents/whiskr/build/src/visitor/CMakeFiles/rebuild_cache.dir

@@ -37,13 +37,29 @@ void printAST(const Expression* expr, int indent = 0) {
 
 int main(){
     Token* startToken = tokenize("main.w");
-    for(Token* i = startToken; i != nullptr; i = i->next()){
-        std::cout << "Token: " << i->name() << std::endl;
+    Token* currentToken = startToken;
+
+    if (currentToken == nullptr) {
+        std::cout << "No tokens returned." << std::endl;
+        return -1;
     }
+
+    std::cout << "Token list: " << std::endl;
+    while(1){
+        if(currentToken->next() != nullptr){
+            std::cout << currentToken->name() << ", ";
+            currentToken = currentToken->next();
+        } else {
+            std::cout << currentToken->name() << ". ";
+            break;
+        }
+    }
+    std::cout << "\n\n";
 
     Parser parser(startToken);
 
     auto list = parser.parseStatements();
+    std::cout << "Statement list size: \n" << list.size() << "\n\n";
     //for(const auto& stmt : list){
     //    printAST(stmt->expr().get());
     //}

@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/gabriel/Documents/whiskr/build/cmake_install.cmake",
+		"/home/gabriel/Documents/whiskr/build/src/utils/cmake_install.cmake",
+		"/home/gabriel/Documents/whiskr/build/src/lexer/cmake_install.cmake",
+		"/home/gabriel/Documents/whiskr/build/src/parser/cmake_install.cmake",
+		"/home/gabriel/Documents/whiskr/build/src/visitor/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

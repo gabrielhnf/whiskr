@@ -12,8 +12,8 @@ class Parser {
     public:
     Token* currentToken;
     Parser(Token* token);
-    std::unique_ptr<Expression> parse();
 
+    std::unique_ptr<Expression> parse();
     std::list<std::unique_ptr<Statement>> statementList;
     std::list<std::unique_ptr<Statement>> parseStatements();
 

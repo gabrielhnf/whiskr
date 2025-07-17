@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <memory>
 
+class Visitor; //Forwards declaration
+
 struct Expression {
     virtual ~Expression() = default;
+    virtual double accept(Visitor& visitor) = 0;
 };
 
 struct Binary : Expression {
@@ -16,6 +19,8 @@ struct Binary : Expression {
     const Token* op() const { return m_op; }
     const std::unique_ptr<Expression>& left() const { return m_left; }
     const std::unique_ptr<Expression>& right() const { return m_right; }
+
+    double accept(Visitor& visitor) override;
 
     private:
     Token* m_op;
@@ -31,6 +36,8 @@ struct Unary : Expression {
     const Token* op() const { return m_op; }
     const std::unique_ptr<Expression>& expr() const { return m_expr; }
 
+    double accept(Visitor& visitor) override;
+
     private:
     Token* m_op;
     std::unique_ptr<Expression> m_expr;
@@ -43,6 +50,8 @@ struct Literal : Expression {
 
     const Token* token() const { return m_token; }
 
+    double accept(Visitor& visitor) override;
+
     private:
     Token* m_token;
 };
@@ -53,6 +62,8 @@ struct Grouping : Expression {
         : m_expr(std::move(expr)) {}
 
     const std::unique_ptr<Expression>& expr() const { return m_expr; }
+
+    double accept(Visitor& visitor) override;
 
     private:
     std::unique_ptr<Expression> m_expr;
